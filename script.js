@@ -3,26 +3,53 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
     const inputWord = document.getElementById('input-word').value;
 
     // Fetch rhymes from Datamuse API
-    const response = await fetch(`https://api.datamuse.com/words?rel_rhy=${encodeURIComponent(inputWord)}`);
-    const rhymes = await response.json();
+    let response = await fetch(`https://api.datamuse.com/words?rel_rhy=${encodeURIComponent(inputWord)}`);
+    let rhymes = await response.json();
 
-    // Calculate Levenshtein distances
-    const distances = rhymes.map(rhyme => ({
-        word: rhyme.word,
-        distance: levenshteinDistance(inputWord, rhyme.word)
-    }));
+    // If no rhymes found, try to find closest matches by spelling similarity
+    if (rhymes.length === 0) {
+        response = await fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(inputWord)}*`);
+        const similarWords = await response.json();
 
-    // Sort by distance and get the two with greatest distance
-    distances.sort((a, b) => b.distance - a.distance);
-    const topTwo = distances.slice(0, 2).map(item => item.word);
+        if (similarWords.length > 0) {
+            // Find the closest matches by Levenshtein distance
+            const distances = similarWords.map(word => ({
+                word: word.word,
+                distance: levenshteinDistance(inputWord, word.word)
+            }));
 
-    // Display the results
-    document.getElementById('results').innerHTML = `
-        <p><strong>Words that rhyme with greatest difference:</strong> ${topTwo.join(', ')}</p>
-    `;
+            // Sort by distance and pick the closest matches
+            distances.sort((a, b) => a.distance - b.distance);
+            const bestGuesses = distances.slice(0, 3).map(item => item.word);
+
+            // Display the "best guess" words
+            document.getElementById('results').innerHTML = `
+                <p><strong>No rhymes found. Did you mean:</strong> ${bestGuesses.join(', ')}</p>
+            `;
+        } else {
+            document.getElementById('results').innerHTML = `
+                <p><strong>No rhymes or close matches found.</strong></p>
+            `;
+        }
+    } else {
+        // Calculate Levenshtein distances for rhymes
+        const distances = rhymes.map(rhyme => ({
+            word: rhyme.word,
+            distance: levenshteinDistance(inputWord, rhyme.word)
+        }));
+
+        // Sort by distance and get the top 3 results with greatest difference
+        distances.sort((a, b) => b.distance - a.distance);
+        const topThree = distances.slice(0, 3).map(item => item.word);
+
+        // Display the results
+        document.getElementById('results').innerHTML = `
+            <p><strong>Words that rhyme with greatest difference:</strong> ${topThree.join(', ')}</p>
+        `;
+    }
 });
 
-// Levenshtein distance function
+// Levenshtein distance function remains the same
 function levenshteinDistance(a, b) {
     const matrix = [];
 
