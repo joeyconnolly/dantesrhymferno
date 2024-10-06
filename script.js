@@ -32,19 +32,36 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
             `;
         }
     } else {
-        // Calculate Levenshtein distances for rhymes
-        const distances = rhymes.map(rhyme => ({
-            word: rhyme.word,
-            distance: levenshteinDistance(inputWord, rhyme.word)
-        }));
+        // Categorize words by length
+        const shortWords = [];
+        const mediumWords = [];
+        const longWords = [];
 
-        // Sort by distance and get the top 3 results with greatest difference
-        distances.sort((a, b) => b.distance - a.distance);
-        const topThree = distances.slice(0, 3).map(item => item.word);
+        rhymes.forEach(rhyme => {
+            const wordLength = rhyme.word.length;
+            if (wordLength <= 5) {
+                shortWords.push(rhyme.word);
+            } else if (wordLength <= 9) {
+                mediumWords.push(rhyme.word);
+            } else {
+                longWords.push(rhyme.word);
+            }
+        });
+
+        // Function to randomly pick a word from an array, if available
+        const pickRandom = (words) => words.length > 0 ? words[Math.floor(Math.random() * words.length)] : null;
+
+        // Pick one word from each category
+        const shortWord = pickRandom(shortWords);
+        const mediumWord = pickRandom(mediumWords);
+        const longWord = pickRandom(longWords);
+
+        // Build the result array and remove any null values
+        const results = [shortWord, mediumWord, longWord].filter(word => word !== null);
 
         // Display the results
         document.getElementById('results').innerHTML = `
-            <p><strong>Phrases that rhyme with greatest difference:</strong> ${topThree.join(', ')}</p>
+            <p><strong>Words that rhyme with different lengths:</strong> ${results.join(', ')}</p>
         `;
     }
 });
