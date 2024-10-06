@@ -12,20 +12,8 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
         const similarWords = await response.json();
 
         if (similarWords.length > 0) {
-            // Find the closest matches by Levenshtein distance
-            const distances = similarWords.map(word => ({
-                word: word.word,
-                distance: levenshteinDistance(inputWord, word.word)
-            }));
-
-            // Sort by distance and pick the closest matches
-            distances.sort((a, b) => a.distance - b.distance);
-            const bestGuesses = distances.slice(0, 3).map(item => item.word);
-
-            // Display the "best guess" words
-            document.getElementById('results').innerHTML = `
-                <p><strong>No rhymes found. Did you mean:</strong> ${bestGuesses.join(', ')}</p>
-            `;
+            const bestGuesses = getTopWords(inputWord, similarWords, 5);
+            displayResults(bestGuesses, "No rhymes found. Did you mean:");
         } else {
             document.getElementById('results').innerHTML = `
                 <p><strong>No rhymes or close matches found.</strong></p>
@@ -33,38 +21,85 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
         }
     } else {
         // Categorize words by length
-        const shortWords = [];
-        const mediumWords = [];
-        const longWords = [];
+        const categorizedWords = categorizeByLength(rhymes);
 
-        rhymes.forEach(rhyme => {
-            const wordLength = rhyme.word.length;
-            if (wordLength <= 5) {
-                shortWords.push(rhyme.word);
-            } else if (wordLength <= 9) {
-                mediumWords.push(rhyme.word);
-            } else {
-                longWords.push(rhyme.word);
-            }
-        });
-
-        // Function to randomly pick a word from an array, if available
-        const pickRandom = (words) => words.length > 0 ? words[Math.floor(Math.random() * words.length)] : null;
-
-        // Pick one word from each category
-        const shortWord = pickRandom(shortWords);
-        const mediumWord = pickRandom(mediumWords);
-        const longWord = pickRandom(longWords);
-
-        // Build the result array and remove any null values
-        const results = [shortWord, mediumWord, longWord].filter(word => word !== null);
+        // Get a mix of short, medium, and long words with randomness
+        const bestWords = getRandomWordMix(categorizedWords, inputWord, 5);
 
         // Display the results
-        document.getElementById('results').innerHTML = `
-            <p><strong>Words that rhyme with different lengths:</strong> ${results.join(', ')}</p>
-        `;
+        displayResults(bestWords, "Words that rhyme with different lengths:");
     }
 });
+
+// Helper function to categorize words by length
+function categorizeByLength(words) {
+    const shortWords = [];
+    const mediumWords = [];
+    const longWords = [];
+
+    words.forEach(wordObj => {
+        const wordLength = wordObj.word.length;
+        if (wordLength <= 4) {
+            shortWords.push(wordObj.word);
+        } else if (wordLength <= 8) {
+            mediumWords.push(wordObj.word);
+        } else {
+            longWords.push(wordObj.word);
+        }
+    });
+
+    return { shortWords, mediumWords, longWords };
+}
+
+// Function to randomly pick words with one from each length and randomness
+function getRandomWordMix(categorizedWords, inputWord, numberOfWords) {
+    const { shortWords, mediumWords, longWords } = categorizedWords;
+
+    // Array to store selected words
+    const selectedWords = [];
+
+    // Function to randomly select a word from an array
+    const pickRandom = (words) => words.length > 0 ? words[Math.floor(Math.random() * words.length)] : null;
+
+    // Ensure we get one short, one medium, and one long word
+    const shortWord = pickRandom(shortWords);
+    const mediumWord = pickRandom(mediumWords);
+    const longWord = pickRandom(longWords);
+
+    // Add them to the selection array
+    if (shortWord) selectedWords.push(shortWord);
+    if (mediumWord) selectedWords.push(mediumWord);
+    if (longWord) selectedWords.push(longWord);
+
+    // Fill the rest of the list with random words from any category
+    while (selectedWords.length < numberOfWords) {
+        const randomCategory = [shortWords, mediumWords, longWords][Math.floor(Math.random() * 3)];
+        const randomWord = pickRandom(randomCategory);
+
+        // Only add if the word is unique and not null
+        if (randomWord && !selectedWords.includes(randomWord)) {
+            selectedWords.push(randomWord);
+        }
+    }
+
+    // Sort the words by Levenshtein distance to add randomness in the order
+    const distances = selectedWords.map(word => ({
+        word: word,
+        distance: levenshteinDistance(inputWord, word)
+    }));
+    distances.sort((a, b) => b.distance - a.distance);
+
+    // Return just the words in the final order
+    return distances.map(item => item.word);
+}
+
+// Function to display the results in a numbered list
+function displayResults(words, message) {
+    const resultList = words.map((word, index) => `${index + 1}. ${word}`).join('<br>');
+    document.getElementById('results').innerHTML = `
+        <p><strong>${message}</strong><br>${resultList}</p>
+    `;
+}
 
 // Levenshtein distance function remains the same
 function levenshteinDistance(a, b) {
