@@ -44,7 +44,7 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
 
         // Display the results
         document.getElementById('results').innerHTML = `
-            <p><strong>Words that rhyme with greatest difference:</strong> ${topThree.join(', ')}</p>
+            <p><strong>Phrases that rhyme with greatest difference:</strong> ${topThree.join(', ')}</p>
         `;
     }
 });
