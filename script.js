@@ -2,7 +2,7 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
     event.preventDefault();
     const inputWord = document.getElementById('input-word').value;
 
-    // Fetch rhymes from Datamuse API with part-of-speech metadata (md=p)
+    // Fetch rhymes from Datamuse API
     let response = await fetch(`https://api.datamuse.com/words?rel_rhy=${encodeURIComponent(inputWord)}&md=p`);
     let rhymes = await response.json();
 
@@ -17,7 +17,7 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
         similarWords = filterCommonWordsAndPhrases(similarWords);
 
         if (similarWords.length > 0) {
-            const bestGuesses = getTopWords(inputWord, similarWords, 5);
+            const bestGuesses = getRandomWordMix(categorizeByLength(similarWords), inputWord, 5);
             displayResults(bestGuesses, "No rhymes found. Did you mean:");
         } else {
             document.getElementById('results').innerHTML = `
@@ -32,7 +32,7 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
         const bestWords = getRandomWordMix(categorizedWords, inputWord, 5);
 
         // Display the results
-        displayResults(bestWords, "Words that rhyme with different lengths:");
+        displayResults(bestWords, "How about these:");
     }
 });
 
@@ -112,15 +112,8 @@ function getRandomWordMix(categorizedWords, inputWord, numberOfWords) {
         }
     }
 
-    // Sort the words by Levenshtein distance to add randomness in the order
-    const distances = selectedWords.map(word => ({
-        word: word,
-        distance: levenshteinDistance(inputWord, word)
-    }));
-    distances.sort((a, b) => b.distance - a.distance);
-
     // Return just the words in the final order
-    return distances.map(item => item.word);
+    return selectedWords;
 }
 
 // Function to display the results in a numbered list
@@ -144,7 +137,7 @@ function levenshteinDistance(a, b) {
     }
 
     for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; i <= a.length; j++) {
+        for (let j = 1; j <= a.length; j++) {
             if (b.charAt(i - 1) === a.charAt(j - 1)) {
                 matrix[i][j] = matrix[i - 1][j - 1];
             } else {
