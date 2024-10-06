@@ -31,8 +31,14 @@ document.getElementById('rhyme-form').addEventListener('submit', async function(
         // Get a mix of short, medium, and long words with randomness
         const bestWords = getRandomWordMix(categorizedWords, inputWord, 5);
 
+        // Always include one word with the maximum Levenshtein distance
+        const maxDistanceWord = getMaxDistanceWord(rhymes, inputWord);
+
+        // Ensure the list includes no more than one obscure word
+        const finalWords = enforceObscureLimit(bestWords, maxDistanceWord);
+
         // Display the results
-        displayResults(bestWords, "How about these:");
+        displayResults(finalWords, "Words that rhyme with different lengths:");
     }
 });
 
@@ -114,6 +120,40 @@ function getRandomWordMix(categorizedWords, inputWord, numberOfWords) {
 
     // Return just the words in the final order
     return selectedWords;
+}
+
+// Function to always include the word with maximum Levenshtein distance
+function getMaxDistanceWord(words, inputWord) {
+    let maxDistance = -1;
+    let maxWord = null;
+
+    words.forEach(wordObj => {
+        const distance = levenshteinDistance(inputWord, wordObj.word);
+        if (distance > maxDistance) {
+            maxDistance = distance;
+            maxWord = wordObj.word;
+        }
+    });
+
+    return maxWord;
+}
+
+// Function to limit obscure words to 1 per list and ensure max distance word is included
+function enforceObscureLimit(words, maxDistanceWord) {
+    const obscureWords = ["naoma", "bouma", "troma", "luoma"]; // Add known obscure words here
+    const filteredWords = words.filter(word => !obscureWords.includes(word));
+
+    // Allow up to 1 obscure word
+    if (filteredWords.length < words.length) {
+        filteredWords.push(words.find(word => obscureWords.includes(word)));
+    }
+
+    // Ensure the word with the maximum Levenshtein distance is included
+    if (!filteredWords.includes(maxDistanceWord)) {
+        filteredWords[Math.floor(Math.random() * filteredWords.length)] = maxDistanceWord;
+    }
+
+    return filteredWords;
 }
 
 // Function to display the results in a numbered list
