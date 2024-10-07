@@ -67,15 +67,27 @@ a:hover {
     color: #003366;
 }
 
-/* Buttons */
+/* Input and Buttons */
+input[type="text"] {
+    padding: 10px;
+    border: 2px solid #e2e2e2;
+    border-radius: 4px;
+    font-size: 1em;
+    margin-right: 10px;
+    width: calc(100% - 140px);
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
 button {
     background: #0066cc;
     color: #fff;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
+    font-size: 1em;
 }
 
 button:hover {
@@ -135,4 +147,13 @@ footer {
         width: 100%;
         padding: 10px;
     }
+}
+
+/* Centering Elements Horizontally */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
