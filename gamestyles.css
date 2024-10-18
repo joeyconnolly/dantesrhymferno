@@ -1,9 +1,8 @@
-
- table, th, td {
+table, th, td {
   border: 1px solid;
   border-collapse: collapse;
   padding: 8px;
-  text-align: center
+  text-align: center;
 }
 
 table {
@@ -19,7 +18,7 @@ td {
   overflow: hidden;
 }
 
-body{
+body {
   background-color: whitesmoke;
 }
 
