@@ -1,64 +1,156 @@
-table, th, td {
-  border: 1px solid;
-  border-collapse: collapse;
-  padding: 8px;
-  text-align: center;
-}
-
-table {
-  border: 1px solid black;
-  table-layout: fixed;
-  width: 200px;
-}
-
-th,
-td {
-  border: 1px solid black;
-  width: 100px;
-  overflow: hidden;
-}
+/* General Styles */
 
 body {
-  background-color: whitesmoke;
+  font-family: 'Georgia', serif;
+  background-color: #fdfdfd;
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
-.column {
-  float: left;
-  width: 50%;
+header, main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+header h1 {
+  font-size: 2.5em;
+  margin-bottom: 0;
 }
 
-/* BELOW IS THE COLLAPSIBLE FORMATTING */
+header h2 {
+  font-size: 1.2em;
+  color: #666;
+}
 
-/* Style the buttons that are used to open and close the accordion panel */
-.accordion {
-  background-color: #eee;
-  color: #444;
+button {
+  background-color: #ffffff;
+  border: 2px solid #333;
+  color: #333;
+  padding: 10px 15px;
+  font-size: 1em;
   cursor: pointer;
+  margin: 5px 0;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #f0f0f0;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.stats div {
+  flex: 1 1 45%;
+  margin: 10px 0;
+}
+
+.stats h3 {
+  margin-bottom: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-buttons button {
+  flex: 1 1 calc(50% - 10px);
+}
+
+#journalEntries {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  height: 200px;
+  overflow-y: auto;
+}
+
+#journalEntries p {
+  margin: 5px 0;
+}
+
+#portfolio ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#portfolio li {
+  background-color: #f9f9f9;
+  margin: 5px 0;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+/* Accordion Styles */
+
+.accordion-button {
+  background-color: #f5f5f5;
+  border: none;
   padding: 10px;
   width: 100%;
   text-align: left;
-  border: none;
+  font-size: 1em;
+  cursor: pointer;
   outline: none;
-  transition: 0.4s;
-  border: 1px solid;
+  transition: background-color 0.3s;
 }
 
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
-  background-color: #ccc;
+.accordion-button:hover {
+  background-color: #e5e5e5;
 }
 
-/* Style the accordion panel. Note: hidden by default */
-.panel {
-  padding: 0 18px;
-  background-color: grey;
+.accordion-content {
   display: none;
-  overflow: hidden;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-top: none;
+  background-color: #fafafa;
 }
+
+.accordion-content p {
+  margin: 0 0 10px 0;
+}
+
+.accordion-content select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+/* Developer Tools */
+
+#cheatMode {
+  background-color: #fffbe6;
+  padding: 20px;
+  border-top: 2px solid #333;
+}
+
+#cheatMode h2 {
+  margin-top: 0;
+}
+
+#cheatMode ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#cheatMode li {
+  margin: 5px 0;
+}
+
