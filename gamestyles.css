@@ -12,63 +12,12 @@ header {
   background-color: #fafafa;
   padding: 10px 20px;
   border-bottom: 1px solid #ddd;
+  text-align: center;
 }
 
 header h1 {
-  display: inline-block;
   margin: 0;
   font-size: 2em;
-}
-
-nav {
-  display: inline-block;
-  float: right;
-}
-
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li {
-  display: inline-block;
-  position: relative;
-}
-
-nav ul li button {
-  background: none;
-  border: none;
-  font-size: 1em;
-  cursor: pointer;
-  padding: 10px;
-}
-
-nav ul li button:hover {
-  background-color: #eee;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #fafafa;
-  min-width: 160px;
-  border: 1px solid #ddd;
-  z-index: 1;
-}
-
-.dropdown-content button {
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.dropdown-content button:hover {
-  background-color: #eee;
-}
-
-.show {
-  display: block;
 }
 
 main {
@@ -91,6 +40,34 @@ main {
 .status-item p {
   font-size: 1.2em;
   margin: 0;
+}
+
+#actions {
+  margin-top: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-buttons button {
+  flex: 1 1 calc(33% - 10px);
+  padding: 10px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.manage-work {
+  margin-top: 20px;
+}
+
+.manage-work button {
+  margin-right: 10px;
+  padding: 10px;
+  font-size: 1em;
+  cursor: pointer;
 }
 
 #journal {
@@ -153,11 +130,11 @@ main {
 
 .modal-content {
   background-color: #fdfdfd;
-  margin: 15% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
-  max-width: 400px;
+  max-width: 500px;
 }
 
 .close {
@@ -165,13 +142,20 @@ main {
   float: right;
   font-size: 1.5em;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
+}
+
+.modal-content button {
+  padding: 10px;
+  font-size: 1em;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 /* Developer Tools */
