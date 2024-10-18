@@ -5,6 +5,7 @@ let poems = [];
 let pendingSubmissions = [];
 let magazines = [];
 let publishers = [];
+let poets = [];
 let player = {
   wellReadness: 50,
   knowledge: 50,
@@ -18,7 +19,6 @@ let player = {
   ethics: 50,
   mood: "Neutral",
   reputation: 0,
-  energy: 100,
   ideas: 5,
   friends: [],
 };
@@ -26,6 +26,7 @@ let player = {
 function startupTasks() {
   initializeMagazines();
   initializePublishers();
+  generateInitialPoets();
   updateStatus();
   logJournal("Your poetic journey begins. Will you rise to literary greatness?");
   openModal('startModal');
@@ -33,13 +34,17 @@ function startupTasks() {
 
 function initializeMagazines() {
   magazines = [
-    { name: "Magma Poetry", qualityThreshold: 20, responseDays: 30 },
+    { name: "The Blue Nib", qualityThreshold: 10, responseDays: 15 },
+    { name: "Algebra of Owls", qualityThreshold: 15, responseDays: 20 },
+    { name: "Brittle Star", qualityThreshold: 20, responseDays: 25 },
+    { name: "Magma Poetry", qualityThreshold: 25, responseDays: 30 },
     { name: "The Rialto", qualityThreshold: 30, responseDays: 45 },
+    { name: "Under the Radar", qualityThreshold: 35, responseDays: 50 },
     { name: "Poetry London", qualityThreshold: 40, responseDays: 60 },
-    { name: "The Poetry Review", qualityThreshold: 60, responseDays: 90 },
-    { name: "PN Review", qualityThreshold: 70, responseDays: 120 },
-    { name: "The London Magazine", qualityThreshold: 80, responseDays: 150 },
-    { name: "Granta", qualityThreshold: 90, responseDays: 180 },
+    { name: "The Poetry Review", qualityThreshold: 50, responseDays: 90 },
+    { name: "PN Review", qualityThreshold: 60, responseDays: 120 },
+    { name: "The London Magazine", qualityThreshold: 70, responseDays: 150 },
+    { name: "Granta", qualityThreshold: 80, responseDays: 180 },
   ];
 
   const magazineSelect = document.getElementById('magazineToSubmit');
@@ -60,10 +65,24 @@ function initializePublishers() {
   ];
 }
 
+function generateInitialPoets() {
+  const firstNames = ["Emily", "William", "Sylvia", "T.S.", "Langston", "Maya", "Robert", "Elizabeth", "W.B.", "Pablo"];
+  const lastNames = ["Dickinson", "Wordsworth", "Plath", "Eliot", "Hughes", "Angelou", "Frost", "Browning", "Yeats", "Neruda"];
+  for (let i = 0; i < 5; i++) {
+    poets.push({
+      name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
+      traits: {
+        intelligence: Math.floor(Math.random() * 50) + 50,
+        kindness: Math.floor(Math.random() * 50) + 50,
+        humor: Math.floor(Math.random() * 50) + 50,
+      },
+    });
+  }
+}
+
 function updateStatus() {
   document.getElementById('daycount').textContent = dayCount;
   document.getElementById('ideasCount').textContent = player.ideas;
-  document.getElementById('energy').textContent = player.energy;
   document.getElementById('mood').textContent = player.mood;
   document.getElementById('reputation').textContent = getReputationLevel();
   updateDevTools();
@@ -84,38 +103,32 @@ function logJournal(entry) {
 }
 
 function writePoem() {
-  if (player.ideas < 1 || player.energy < 10) {
-    logJournal("You lack the energy or ideas to write a poem today.");
+  if (player.ideas < 1) {
+    logJournal("You lack ideas to write a poem today.");
     return;
   }
 
   player.ideas -= 1;
-  player.energy -= 10;
 
   const poem = createPoem();
   poems.push(poem);
   updatePoemLists();
 
-  logJournal(`You penned a new ${poem.type}, titled "${poem.title}".`);
+  logJournal(`You crafted a new ${poem.type}, titled "${poem.title}".`);
+
+  // Drafting a poem affects traits
+  player.poeticInstinct += Math.floor(Math.random() * 3);
+  player.phrasemaking += Math.floor(Math.random() * 2);
+  player.imagination += Math.floor(Math.random() * 2);
 
   endDay();
 }
 
 function createPoem() {
-  const titles = [
-    "The Silent Horizon",
-    "Echoes of Tomorrow",
-    "Whispers in the Wind",
-    "Reflections of Time",
-    "Shadows of the Mind",
-    "Embers of the Heart",
-    "Fragments of Light",
-    "Dreams Unveiled",
-    "Songs of Solitude",
-    "Canvas of Stars",
-  ];
-  const types = ["sonnet", "free verse", "haiku", "villanelle", "sestina", "ode", "elegy", "ballad", "limerick", "ghazal"];
-  const title = titles[Math.floor(Math.random() * titles.length)];
+  const adjectives = ["Silent", "Echoing", "Whispering", "Reflective", "Shadowy", "Burning", "Fractured", "Dreamy", "Solitary", "Starlit"];
+  const nouns = ["Horizon", "Tomorrow", "Wind", "Time", "Mind", "Heart", "Light", "Dream", "Song", "Canvas"];
+  const types = ["Sonnet", "Free Verse", "Haiku", "Villanelle", "Sestina", "Ode", "Elegy", "Ballad", "Limerick", "Ghazal"];
+  const title = `The ${adjectives[Math.floor(Math.random() * adjectives.length)]} ${nouns[Math.floor(Math.random() * nouns.length)]}`;
   const type = types[Math.floor(Math.random() * types.length)];
 
   // Poem attributes based on player's stats
@@ -124,7 +137,7 @@ function createPoem() {
     technicality: calculateAttribute([player.wellReadness, player.poeticInstinct, player.phrasemaking]),
     profundity: calculateAttribute([player.selfAwareness, player.knowledge]),
     originality: calculateAttribute([player.boldness, player.imagination]),
-    emotion: calculateAttribute([player.selfAwareness, player.mood]),
+    emotion: calculateAttribute([player.selfAwareness, player.mood === "Happy" ? 10 : 0]),
     musicality: calculateAttribute([player.ear, player.phrasemaking]),
   };
 
@@ -149,77 +162,90 @@ function calculateAttribute(stats) {
 }
 
 function readPoetry() {
-  if (player.energy < 10) {
-    logJournal("You're too tired to read today.");
-    return;
-  }
+  const realPoets = ["Seamus Heaney", "Carol Ann Duffy", "Ted Hughes", "Philip Larkin", "Derek Walcott", "Simon Armitage", "Alice Oswald", "Jackie Kay"];
+  const fakePoets = ["Amelia Rivers", "Jonathan Swiftly", "Luna Nightshade", "Oliver Finch", "Grace Willow", "Eleanor Frost", "Marcus Reed", "Clara Hart"];
 
-  player.energy -= 10;
+  const allPoets = [...realPoets, ...fakePoets];
+  const poetRead = allPoets[Math.floor(Math.random() * allPoets.length)];
+
   player.wellReadness += 5;
   player.ideas += 2;
   player.phrasemaking += 3;
   player.ear += 2;
 
-  logJournal("You immersed yourself in the works of great poets, gaining inspiration.");
+  logJournal(`You read poetry by ${poetRead}, enriching your understanding of the craft.`);
 
   endDay();
 }
 
 function goForWalk() {
-  if (player.energy < 5) {
-    logJournal("You're too exhausted to go for a walk.");
-    return;
-  }
-
-  player.energy -= 5;
   player.ideas += 3;
   player.observation += 4;
   player.mood = "Content";
 
-  logJournal("A stroll through nature refreshed your mind and sparked new ideas.");
+  logJournal("A walk amidst nature rejuvenated your senses and sparked new ideas.");
 
   endDay();
 }
 
 function socialize() {
-  if (player.energy < 15) {
-    logJournal("You don't have enough energy to socialize.");
-    return;
-  }
+  const socialGroups = [
+    { name: "Local Poetry Club", requiredReputation: 0 },
+    { name: "Aspiring Poets' Circle", requiredReputation: 20 },
+    { name: "Established Poets' Guild", requiredReputation: 50 },
+  ];
 
-  player.energy -= 15;
+  let availableGroups = socialGroups.filter(group => player.reputation >= group.requiredReputation && !player.friends.includes(group.name));
 
-  // Depending on reputation, unlock social circles
-  if (player.reputation >= 50 && !player.friends.includes("Established Poets")) {
-    player.friends.push("Established Poets");
-    logJournal("You've befriended some established poets. Your network grows!");
+  if (availableGroups.length > 0) {
+    let group = availableGroups[0];
+    player.friends.push(group.name);
+    logJournal(`You attended a meeting of the ${group.name} and made new connections.`);
+    // Chance to meet a poet
+    if (Math.random() < 0.5) {
+      let newPoet = generateRandomPoet();
+      poets.push(newPoet);
+      logJournal(`You met ${newPoet.name}, a fellow poet with unique insights.`);
+    }
     player.reputation += 5;
-  } else if (player.reputation >= 30 && !player.friends.includes("Aspiring Poets")) {
-    player.friends.push("Aspiring Poets");
-    logJournal("You've met some aspiring poets at a local event.");
-    player.reputation += 3;
   } else {
-    logJournal("You spent time with friends, enjoying pleasant conversations.");
+    logJournal("You spent time with your existing friends, sharing thoughts and experiences.");
     player.mood = "Happy";
   }
 
   endDay();
 }
 
-function introspect() {
-  if (player.energy < 10) {
-    logJournal("Your mind is too cluttered for introspection.");
-    return;
-  }
+function generateRandomPoet() {
+  const firstNames = ["Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Jamie", "Drew", "Cameron", "Lee"];
+  const lastNames = ["Harris", "Morgan", "Clark", "Bell", "Bailey", "Parker", "Brooks", "Reed", "Cook", "Price"];
+  return {
+    name: `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
+    traits: {
+      intelligence: Math.floor(Math.random() * 50) + 50,
+      kindness: Math.floor(Math.random() * 50) + 50,
+      humor: Math.floor(Math.random() * 50) + 50,
+    },
+  };
+}
 
-  player.energy -= 10;
+function introspect() {
   player.selfAwareness += 5;
   player.ethics += 2;
   player.mood = "Thoughtful";
 
-  logJournal("You reflected on your journey, gaining deeper self-understanding.");
+  let introspection = `After reflecting, you realize you are ${describeTrait(player.wellReadness, "well-read")}, ${describeTrait(player.knowledge, "knowledgeable")}, ${describeTrait(player.poeticInstinct, "instinctual in poetry")}, ${describeTrait(player.phrasemaking, "adept at phrasemaking")}, ${describeTrait(player.imagination, "imaginative")}, and ${describeTrait(player.selfAwareness, "self-aware")}.`;
+
+  logJournal(introspection);
 
   endDay();
+}
+
+function describeTrait(value, traitName) {
+  if (value < 30) return `not very ${traitName}`;
+  if (value < 60) return `somewhat ${traitName}`;
+  if (value < 80) return `${traitName}`;
+  return `highly ${traitName}`;
 }
 
 function showEditModal() {
@@ -249,18 +275,12 @@ function editPoem() {
 
   const poem = poems.find(p => p.title === poemTitle);
 
-  if (player.energy < 10) {
-    logJournal("You're too tired to focus on editing.");
-    return;
-  }
-
-  player.energy -= 10;
   poem.drafts += 1;
 
   // Improve random attributes
   for (let attr in poem.attributes) {
     if (Math.random() < 0.5) {
-      poem.attributes[attr] += Math.floor(player.technique() * 0.1);
+      poem.attributes[attr] += Math.floor(Math.random() * 5) + 1;
     }
   }
 
@@ -269,7 +289,11 @@ function editPoem() {
     (poem.attributes.imagery + poem.attributes.technicality + poem.attributes.profundity + poem.attributes.originality + poem.attributes.emotion + poem.attributes.musicality) / 6
   );
 
-  logJournal(`You refined "${poem.title}", enhancing its ${poem.type} form.`);
+  logJournal(`You refined "${poem.title}", enhancing its qualities.`);
+
+  // Editing a poem can affect traits
+  player.phrasemaking += Math.floor(Math.random() * 2);
+  player.poeticInstinct += Math.floor(Math.random() * 2);
 
   updatePoemLists();
   closeModal('editModal');
@@ -374,10 +398,10 @@ function processSubmissions() {
         sub.poem.status = "Published";
         sub.poem.publication = sub.magazine.name;
         player.reputation += sub.magazine.qualityThreshold / 10;
-        logJournal(`Great news! "${sub.poem.title}" was accepted by ${sub.magazine.name}!`);
+        logJournal(`Success! "${sub.poem.title}" was accepted by ${sub.magazine.name}!`);
       } else {
         sub.poem.status = "Unpublished";
-        logJournal(`Unfortunately, "${sub.poem.title}" was rejected by ${sub.magazine.name}.`);
+        logJournal(`"${sub.poem.title}" was rejected by ${sub.magazine.name}. Keep trying!`);
       }
       updatePoemLists();
       return false;
@@ -397,23 +421,25 @@ function triggerRandomEvent() {
   const events = [
     () => {
       player.ideas += 5;
-      logJournal("An unexpected muse blesses you with a surge of ideas.");
-    },
-    () => {
-      player.energy -= 20;
-      logJournal("A bout of illness leaves you feeling drained.");
+      logJournal("An unexpected inspiration fills your mind with new ideas.");
     },
     () => {
       player.wellReadness += 10;
-      logJournal("You find an old anthology that enriches your knowledge.");
+      logJournal("You stumbled upon a rare poetry collection, expanding your knowledge.");
     },
     () => {
       player.reputation += 5;
-      logJournal("A renowned poet mentions you in an interview, boosting your reputation.");
+      logJournal("A positive review of your work boosts your reputation.");
     },
     () => {
       player.mood = "Anxious";
-      logJournal("Self-doubt creeps in, unsettling your mood.");
+      logJournal("Self-doubt sets in, affecting your mood.");
+    },
+    () => {
+      let newFriend = generateRandomPoet();
+      poets.push(newFriend);
+      player.friends.push(newFriend.name);
+      logJournal(`You met ${newFriend.name} at a local event and became friends.`);
     },
   ];
 
@@ -448,7 +474,6 @@ function updateDevTools() {
 }
 
 function addResources() {
-  player.energy = 100;
   player.ideas += 10;
   player.wellReadness += 20;
   player.poeticInstinct += 20;
