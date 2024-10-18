@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -6,114 +6,121 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script src="jquery.js"></script>
 
-  <title>Poet Simulator v0.3</title>
+  <title>Poet Simulator v0.4</title>
 </head>
 
 <body onload="startupTasks()">
 
   <div class="row">
-	
-	<div class="column">
 
-		<!-- Show/Hide Dev Tools -->
-		<button onclick="toggleCheatMode()">Developer Tools</button>
+    <div class="column">
 
-		<h2>DAY: <span id="daycount">1</span></h2>
+      <!-- Show/Hide Dev Tools -->
+      <button onclick="toggleCheatMode()">Developer Tools</button>
 
-		<table>
-		  <caption>About You</caption>
-		  <tr>
-			<th>Ideas</th>
-			<th>Reputation</th>
-			<th>Mood</th>
-		  </tr>
-		  <tr>
-			<td><span id="ideasCount">0</span></td>
-			<td><span id="reputation">Unknown</span></td>
-			<td><span id="mood">Neutral</span></td
-		  </tr>
-		</table>
+      <h2>DAY: <span id="daycount">1</span></h2>
 
-		<br/>
+      <table>
+        <caption>About You</caption>
+        <tr>
+          <th>Ideas</th>
+          <th>Reputation</th>
+          <th>Mood</th>
+        </tr>
+        <tr>
+          <td><span id="ideasCount">0</span></td>
+          <td><span id="reputation">Unknown</span></td>
+          <td><span id="mood">Neutral</span></td>
+        </tr>
+      </table>
 
-		<p>What do you want to do today?</p>
-		<button onclick="writePoem()">Write a Poem</button>
-		<button onclick="takeWalk()">Go for a Walk</button>
-		<button onclick="readABook()">Read Some Poems</button>
-		<button onclick="introspect()">Introspect</button>
-		<button onclick="study()">Study</button>
-		<br></br>
+      <br />
+
+      <p>What do you want to do today?</p>
+      <button onclick="writePoem()">Write a Poem</button>
+      <button onclick="takeWalk()">Go for a Walk</button>
+      <button onclick="readABook()">Read Some Poems</button>
+      <button onclick="introspect()">Introspect</button>
+      <button onclick="study()">Study</button>
+      <br></br>
 
 
 
-		<button class="accordion">Redraft a Poem <em>(click for options)</em></button>
-			<div class="panel">
-				<p>Work on <select class="unpublishedpoems" id="poemtodraft"><option>Choose Poem</option></select>
-				<button onclick="redraftPoem()">Redraft</button></p>
-			</div>
+      <button class="accordion">Redraft a Poem <em>(click for options)</em></button>
+      <div class="panel">
+        <p>Work on <select class="unpublishedpoems" id="poemtodraft">
+            <option>Choose Poem</option>
+          </select>
+          <button onclick="redraftPoem()">Redraft</button>
+        </p>
+      </div>
 
-		<button class="accordion">Submit a Poem <em>(click for options)</em></button>
-			<div class="panel">
-				<p>Send <select class="unpublishedpoems" id="poemtosubmit"><option>Choose Poem</option></select> to <select id="selectmagazine"></select>
-			<button onclick="submitPoem()">Submit</button></p>
-			</div>
+      <button class="accordion">Submit a Poem <em>(click for options)</em></button>
+      <div class="panel">
+        <p>Send <select class="unpublishedpoems" id="poemtosubmit">
+            <option>Choose Poem</option>
+          </select> to <select id="selectmagazine"></select>
+          <button onclick="submitPoem()">Submit</button>
+        </p>
+      </div>
 
-		<button class="accordion">Socialise <em>(click for options)</em></button>
-			<div class="panel">
-				<p>Socialise with
-					<select id="socialiselist">
-						<optgroup label="Choose Social Group">
-						<option>Non-poets</option>
-					<select>
-				<button onclick="socialise()">Socialise</button></p>
-			</div>
+      <button class="accordion">Socialise <em>(click for options)</em></button>
+      <div class="panel">
+        <p>Socialise with
+          <select id="socialiselist">
+            <optgroup label="Choose Social Group">
+              <option>Non-poets</option>
+            </optgroup>
+          </select>
+          <button onclick="socialise()">Socialise</button>
+        </p>
+      </div>
 
-		<div class="console" style="background-color:black; color:green; font-family: monospace;"><b>
-			<p>> <span id="line4"></span></p>
-			<p>> <span id="line3"></span></p>
-			<p>> <span id="line2"></span></p>
-			<p>> <span id="line1"></span></p>
-		</b></div>
-		
-		<p>***</p>
+      <div class="console" style="background-color:black; color:green; font-family: monospace;"><b>
+          <p>> <span id="line4"></span></p>
+          <p>> <span id="line3"></span></p>
+          <p>> <span id="line2"></span></p>
+          <p>> <span id="line1"></span></p>
+        </b></div>
 
-		<p>Unpublished Poems:<span id="unpublishedpoems"></span></p>
+      <p>***</p>
 
-		<p>Published Poems:<span id="publishedpoems"></span></p>
+      <p>Unpublished Poems:<span id="unpublishedpoems"></span></p>
 
-	</div>
+      <p>Published Poems:<span id="publishedpoems"></span></p>
 
-	<!--  TESTING COLUMN ************************************************** -->
+      <p>Known Poets:<span id="knownpoets"></span></p>
 
-	<div class="column" style="background-color:#bbb;">
-		
-		<div id="cheatMode" hidden>
-			<button id="test" onclick="test()">TEST</button>
-			<p>Log Value: <span id="logger"> </span> </p>
+    </div>
 
-			<p>PLAYER ATTRIBUTES
-				<br>Well Readness: <span id="wellreadness"></span>
-				<br>Knowledge: <span id="knowledge2"></span>
-				<br>Poetic Instinct: <span id="poeticinstinct"></span>
-				<br>Phrasemaking: <span id="phrasemaking"></span>
-				<br>Imagination: <span id="imagination"></span>
-				<br>Self-awareness: <span id="selfawareness"></span>
-				<br>Boldness: <span id="boldness"></span>
-				<br>Ear: <span id="ear"></span>
-				<br>Mood: <span id="mood2"></span>
-				<br>Observation: <span id="observation"></span>
-				<br>Ethics: <span id="ethics"></span>
-			</p>
-		</div>	
-	</div>
-	
+    <!--  TESTING COLUMN ************************************************** -->
+
+    <div class="column" style="background-color:#bbb;">
+
+      <div id="cheatMode" hidden>
+        <button id="test" onclick="test()">TEST</button>
+        <p>Log Value: <span id="logger"> </span> </p>
+
+        <p>PLAYER ATTRIBUTES
+          <br>Well Readness: <span id="wellreadness"></span>
+          <br>Knowledge: <span id="knowledge2"></span>
+          <br>Poetic Instinct: <span id="poeticinstinct"></span>
+          <br>Phrasemaking: <span id="phrasemaking"></span>
+          <br>Imagination: <span id="imagination"></span>
+          <br>Self-awareness: <span id="selfawareness"></span>
+          <br>Boldness: <span id="boldness"></span>
+          <br>Ear: <span id="ear"></span>
+          <br>Mood: <span id="mood2"></span>
+          <br>Observation: <span id="observation"></span>
+          <br>Ethics: <span id="ethics"></span>
+        </p>
+      </div>
+    </div>
+
   </div>
 
   <script type="text/javascript" src="gamescripts.js"></script>
   <script type="text/javascript" src="wordlists.js"></script>
-	
+
 </body>
 </html>
-
-
-
