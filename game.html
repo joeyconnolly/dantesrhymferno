@@ -3,33 +3,24 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Poet's Odyssey</title>
+  <title>Poet's Quest</title>
   <link rel="stylesheet" href="gamestyles.css">
 </head>
 
 <body onload="startupTasks()">
+  <!-- Start Game Modal -->
+  <div id="startModal" class="modal">
+    <div class="modal-content">
+      <h2>Welcome to Poet's Quest</h2>
+      <p>
+        Embark on your journey to become a renowned poet. Start by submitting your work to small magazines, build your reputation, and climb the literary ladder. Make friends with fellow poets, refine your craft, and aim to publish your own book. Remember, patience is key; magazines can take up to a month to respond. Good luck!
+      </p>
+      <button onclick="closeModal('startModal')">Begin Your Journey</button>
+    </div>
+  </div>
+
   <header>
-    <h1>Poet's Odyssey</h1>
-    <nav>
-      <ul>
-        <li><button onclick="toggleDropdown('actionDropdown')">Actions &#x25BC;</button>
-          <div id="actionDropdown" class="dropdown-content">
-            <button onclick="writePoem()">Compose Poetry</button>
-            <button onclick="attendReading()">Attend Reading</button>
-            <button onclick="joinWorkshop()">Join Workshop</button>
-            <button onclick="networkEvent()">Network Event</button>
-            <button onclick="relax()">Relax</button>
-          </div>
-        </li>
-        <li><button onclick="toggleDropdown('manageDropdown')">Manage Work &#x25BC;</button>
-          <div id="manageDropdown" class="dropdown-content">
-            <button onclick="showEditModal()">Edit Poem</button>
-            <button onclick="showSubmitModal()">Submit Poem</button>
-          </div>
-        </li>
-        <li><button onclick="toggleCheatMode()">Dev Tools</button></li>
-      </ul>
-    </nav>
+    <h1>Poet's Quest</h1>
   </header>
 
   <main>
@@ -39,8 +30,8 @@
         <p id="daycount">1</p>
       </div>
       <div class="status-item">
-        <h2>Inspiration</h2>
-        <p id="inspiration">50</p>
+        <h2>Ideas</h2>
+        <p id="ideasCount">0</p>
       </div>
       <div class="status-item">
         <h2>Energy</h2>
@@ -52,14 +43,32 @@
       </div>
       <div class="status-item">
         <h2>Mood</h2>
-        <p id="mood">Content</p>
+        <p id="mood">Neutral</p>
+      </div>
+    </section>
+
+    <section id="actions">
+      <h2>What will you do today?</h2>
+      <div class="action-buttons">
+        <button onclick="writePoem()">Write a Poem</button>
+        <button onclick="readPoetry()">Read Poetry</button>
+        <button onclick="goForWalk()">Go for a Walk</button>
+        <button onclick="socialize()">Socialize</button>
+        <button onclick="introspect()">Introspect</button>
+      </div>
+
+      <div class="manage-work">
+        <h2>Manage Your Work</h2>
+        <button onclick="showEditModal()">Edit a Poem</button>
+        <button onclick="showSubmitModal()">Submit a Poem</button>
+        <button onclick="showSubmissions()">View Submissions</button>
       </div>
     </section>
 
     <section id="journal">
       <h2>Journal</h2>
       <div id="journalEntries">
-        <p>Day 1: You stand at the dawn of your poetic journey, the quill eager in your hand.</p>
+        <!-- Journal entries will appear here -->
       </div>
     </section>
 
@@ -79,10 +88,10 @@
   <div id="editModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('editModal')">&times;</span>
-      <h2>Edit Poem</h2>
+      <h2>Edit a Poem</h2>
       <p>Select a poem to edit:</p>
       <select id="poemToEdit">
-        <option value="">-- Choose Poem --</option>
+        <!-- Options populated dynamically -->
       </select>
       <button onclick="editPoem()">Edit Selected Poem</button>
     </div>
@@ -92,16 +101,27 @@
   <div id="submitModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('submitModal')">&times;</span>
-      <h2>Submit Poem</h2>
+      <h2>Submit a Poem</h2>
       <p>Select a poem to submit:</p>
       <select id="poemToSubmit">
-        <option value="">-- Choose Poem --</option>
+        <!-- Options populated dynamically -->
       </select>
-      <p>Select a publication:</p>
-      <select id="publicationToSubmit">
-        <option value="">-- Choose Publication --</option>
+      <p>Select a magazine:</p>
+      <select id="magazineToSubmit">
+        <!-- Options populated dynamically -->
       </select>
       <button onclick="submitPoem()">Submit Poem</button>
+    </div>
+  </div>
+
+  <!-- View Submissions Modal -->
+  <div id="submissionsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('submissionsModal')">&times;</span>
+      <h2>Pending Submissions</h2>
+      <ul id="pendingSubmissionsList">
+        <!-- Pending submissions will be listed here -->
+      </ul>
     </div>
   </div>
 
@@ -110,12 +130,16 @@
     <h2>Developer Tools</h2>
     <p>Player Stats:</p>
     <ul>
-      <li>Creativity: <span id="devCreativity"></span></li>
-      <li>Technique: <span id="devTechnique"></span></li>
-      <li>Exposure: <span id="devExposure"></span></li>
-      <li>Insight: <span id="devInsight"></span></li>
-      <li>Energy: <span id="devEnergy"></span></li>
-      <li>Inspiration: <span id="devInspiration"></span></li>
+      <li>Well-Readness: <span id="devWellReadness"></span></li>
+      <li>Knowledge: <span id="devKnowledge"></span></li>
+      <li>Poetic Instinct: <span id="devPoeticInstinct"></span></li>
+      <li>Phrasemaking: <span id="devPhrasemaking"></span></li>
+      <li>Imagination: <span id="devImagination"></span></li>
+      <li>Self-Awareness: <span id="devSelfAwareness"></span></li>
+      <li>Boldness: <span id="devBoldness"></span></li>
+      <li>Ear: <span id="devEar"></span></li>
+      <li>Observation: <span id="devObservation"></span></li>
+      <li>Ethics: <span id="devEthics"></span></li>
     </ul>
     <button onclick="addResources()">Add Resources</button>
   </div>
