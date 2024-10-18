@@ -1,10 +1,9 @@
-/* Poet's Journey Game Script */
+/* Poet's Odyssey Game Script */
 
 let dayCount = 1;
 let poems = [];
 let pendingSubmissions = [];
 let publications = [];
-let events = [];
 let player = {
   creativity: 50,
   technique: 50,
@@ -19,16 +18,16 @@ let player = {
 function startupTasks() {
   initializePublications();
   updateStatus();
-  logJournal("You awaken with a spark of inspiration. The world of poetry awaits.");
+  logJournal("You stand at the dawn of your poetic journey, the quill eager in your hand.");
 }
 
 function initializePublications() {
   publications = [
-    { name: "The Whispering Quill", qualityThreshold: 30 },
-    { name: "Verse Vanguard", qualityThreshold: 50 },
-    { name: "Echoes Literary Magazine", qualityThreshold: 70 },
-    { name: "The Poetic Herald", qualityThreshold: 85 },
-    { name: "Global Poets Quarterly", qualityThreshold: 95 },
+    { name: "The Muse's Whisper", qualityThreshold: 30 },
+    { name: "Ink and Essence", qualityThreshold: 50 },
+    { name: "Luminary Letters", qualityThreshold: 70 },
+    { name: "Verse Chronicle", qualityThreshold: 85 },
+    { name: "World Poetry Digest", qualityThreshold: 95 },
   ];
 
   const publicationSelect = document.getElementById('publicationToSubmit');
@@ -50,7 +49,7 @@ function updateStatus() {
 }
 
 function getReputationLevel() {
-  const levels = ["Unknown", "Emerging", "Recognized", "Renowned", "Legendary"];
+  const levels = ["Unknown", "Budding", "Emerging", "Established", "Renowned", "Legendary"];
   let index = Math.floor(player.reputation / 20);
   index = index >= levels.length ? levels.length - 1 : index;
   return levels[index];
@@ -59,13 +58,13 @@ function getReputationLevel() {
 function logJournal(entry) {
   const journal = document.getElementById('journalEntries');
   const newEntry = document.createElement('p');
-  newEntry.textContent = `> ${entry}`;
+  newEntry.textContent = `Day ${dayCount}: ${entry}`;
   journal.prepend(newEntry);
 }
 
 function writePoem() {
   if (player.inspiration < 10 || player.energy < 10) {
-    logJournal("You're too exhausted or uninspired to compose poetry today.");
+    logJournal("Fatigue clouds your mind, and inspiration eludes you.");
     return;
   }
 
@@ -76,28 +75,28 @@ function writePoem() {
   poems.push(poem);
   updatePoemLists();
 
-  logJournal(`You composed a new poem titled "${poem.title}".`);
+  logJournal(`Verses flow onto the page as you compose "${poem.title}".`);
 
   endDay();
 }
 
 function createPoem() {
   const titles = [
-    "Whispers of the Forgotten",
-    "Echoes in Silence",
-    "Shadows of Yesterday",
-    "Journey Through Dreams",
-    "Embers of Hope",
-    "Canvas of Stars",
-    "Melodies Unheard",
-    "Fragments of Time",
-    "Solace in Solitude",
-    "Reflections of Dawn",
+    "Whispers of Eternity",
+    "Echoes of the Soul",
+    "Shadows and Light",
+    "Journey of the Heart",
+    "Embers of Memory",
+    "Canvas of Dreams",
+    "Melodies of the Wind",
+    "Fragments of Hope",
+    "Solace in Stars",
+    "Reflections Beyond Time",
   ];
   const title = titles[Math.floor(Math.random() * titles.length)];
 
   const quality = Math.floor(
-    (player.creativity * 0.5 + player.technique * 0.5) * (Math.random() * 0.3 + 0.7)
+    (player.creativity * 0.6 + player.technique * 0.4) * (Math.random() * 0.4 + 0.6)
   );
 
   return {
@@ -109,7 +108,7 @@ function createPoem() {
 
 function attendReading() {
   if (player.energy < 15) {
-    logJournal("You're too tired to attend a poetry reading.");
+    logJournal("Your limbs feel heavy; you decide to rest instead of going out.");
     return;
   }
 
@@ -117,14 +116,14 @@ function attendReading() {
   player.inspiration += 20;
   player.exposure += 5;
 
-  logJournal("You attended a captivating poetry reading. Your inspiration soars.");
+  logJournal("Inspired by the words of others at the reading, your muse awakens.");
 
   endDay();
 }
 
 function joinWorkshop() {
   if (player.energy < 20 || player.inspiration < 5) {
-    logJournal("You don't have enough energy or inspiration to join a workshop.");
+    logJournal("You lack the energy or inspiration to engage in a workshop today.");
     return;
   }
 
@@ -133,14 +132,14 @@ function joinWorkshop() {
   player.technique += 10;
   player.insight += 10;
 
-  logJournal("You participated in a workshop, honing your craft.");
+  logJournal("Through collaborative effort at the workshop, your skills sharpen.");
 
   endDay();
 }
 
 function networkEvent() {
   if (player.energy < 15) {
-    logJournal("You're too drained to network with others.");
+    logJournal("Exhaustion takes over; you skip the networking event.");
     return;
   }
 
@@ -148,7 +147,7 @@ function networkEvent() {
   player.exposure += 15;
   player.reputation += 5;
 
-  logJournal("You connected with fellow poets at a networking event.");
+  logJournal("You mingle with fellow poets, forging connections that could shape your future.");
 
   endDay();
 }
@@ -161,9 +160,25 @@ function relax() {
   if (player.energy > 100) player.energy = 100;
   if (player.inspiration > 100) player.inspiration = 100;
 
-  logJournal("You took time to relax and reflect. Energy and inspiration restored.");
+  logJournal("A day of rest rejuvenates your spirit and body.");
 
   endDay();
+}
+
+function showEditModal() {
+  const poemSelect = document.getElementById('poemToEdit');
+  poemSelect.innerHTML = "<option value=''>-- Choose Poem --</option>";
+
+  poems.forEach(poem => {
+    if (poem.status === "Unpublished") {
+      let option = document.createElement('option');
+      option.value = poem.title;
+      option.textContent = poem.title;
+      poemSelect.appendChild(option);
+    }
+  });
+
+  openModal('editModal');
 }
 
 function editPoem() {
@@ -171,24 +186,41 @@ function editPoem() {
   const poemTitle = poemSelect.value;
 
   if (!poemTitle) {
-    logJournal("No poem selected for editing.");
+    logJournal("Your thoughts wander without a poem to focus on.");
     return;
   }
 
   const poem = poems.find(p => p.title === poemTitle);
 
   if (player.energy < 10) {
-    logJournal("You're too tired to edit your work.");
+    logJournal("Your mind is weary; editing will have to wait.");
     return;
   }
 
   player.energy -= 10;
   poem.quality += Math.floor(player.technique * 0.1);
 
-  logJournal(`You refined your poem "${poem.title}". Its quality improved.`);
+  logJournal(`You refine "${poem.title}", polishing its verses to a new sheen.`);
 
   updatePoemLists();
+  closeModal('editModal');
   endDay();
+}
+
+function showSubmitModal() {
+  const poemSelect = document.getElementById('poemToSubmit');
+  poemSelect.innerHTML = "<option value=''>-- Choose Poem --</option>";
+
+  poems.forEach(poem => {
+    if (poem.status === "Unpublished") {
+      let option = document.createElement('option');
+      option.value = poem.title;
+      option.textContent = poem.title;
+      poemSelect.appendChild(option);
+    }
+  });
+
+  openModal('submitModal');
 }
 
 function submitPoem() {
@@ -198,7 +230,7 @@ function submitPoem() {
   const pubName = pubSelect.value;
 
   if (!poemTitle || !pubName) {
-    logJournal("Please select both a poem and a publication to submit.");
+    logJournal("Uncertainty stalls your submission; select both a poem and a publication.");
     return;
   }
 
@@ -206,45 +238,32 @@ function submitPoem() {
   const publication = publications.find(p => p.name === pubName);
 
   if (poem.status !== "Unpublished") {
-    logJournal(`"${poem.title}" has already been submitted or published.`);
+    logJournal(`"${poem.title}" has already embarked on its journey to readers.`);
     return;
   }
 
   poem.status = "Pending";
   pendingSubmissions.push({ poem: poem, publication: publication, daySubmitted: dayCount });
 
-  logJournal(`You submitted "${poem.title}" to ${publication.name}.`);
+  logJournal(`With hopeful anticipation, you submit "${poem.title}" to ${publication.name}.`);
 
   updatePoemLists();
+  closeModal('submitModal');
   endDay();
 }
 
 function updatePoemLists() {
   const unpublishedList = document.getElementById('unpublishedPoemsList');
   const publishedList = document.getElementById('publishedPoemsList');
-  const poemToEditSelect = document.getElementById('poemToEdit');
-  const poemToSubmitSelect = document.getElementById('poemToSubmit');
 
   unpublishedList.innerHTML = "";
   publishedList.innerHTML = "";
-  poemToEditSelect.innerHTML = "<option value=''>-- Choose Poem --</option>";
-  poemToSubmitSelect.innerHTML = "<option value=''>-- Choose Poem --</option>";
 
   poems.forEach(poem => {
     if (poem.status === "Unpublished") {
       const listItem = document.createElement('li');
       listItem.textContent = `${poem.title} (Quality: ${poem.quality})`;
       unpublishedList.appendChild(listItem);
-
-      let option = document.createElement('option');
-      option.value = poem.title;
-      option.textContent = poem.title;
-      poemToEditSelect.appendChild(option);
-
-      option = document.createElement('option');
-      option.value = poem.title;
-      option.textContent = poem.title;
-      poemToSubmitSelect.appendChild(option);
     } else if (poem.status === "Published") {
       const listItem = document.createElement('li');
       listItem.textContent = `${poem.title} (Published in ${poem.publication})`;
@@ -268,10 +287,10 @@ function processSubmissions() {
         sub.poem.status = "Published";
         sub.poem.publication = sub.publication.name;
         player.reputation += 10;
-        logJournal(`Your poem "${sub.poem.title}" was accepted by ${sub.publication.name}!`);
+        logJournal(`Joyous news arrives: "${sub.poem.title}" was accepted by ${sub.publication.name}!`);
       } else {
         sub.poem.status = "Unpublished";
-        logJournal(`Your poem "${sub.poem.title}" was rejected by ${sub.publication.name}.`);
+        logJournal(`A letter of regret informs you that "${sub.poem.title}" was not accepted by ${sub.publication.name}.`);
       }
       updatePoemLists();
       return false;
@@ -291,23 +310,23 @@ function triggerRandomEvent() {
   const events = [
     () => {
       player.inspiration += 20;
-      logJournal("A sudden muse visits you. Your inspiration surges.");
+      logJournal("A stroll through nature ignites a blaze of inspiration within you.");
     },
     () => {
       player.energy -= 20;
-      logJournal("You caught a cold. Energy levels are low.");
+      logJournal("Sleepless nights take their toll, leaving you drained.");
     },
     () => {
       player.creativity += 10;
-      logJournal("You had an enlightening conversation. Creativity increased.");
+      logJournal("A profound dream enriches your creativity.");
     },
     () => {
       player.reputation += 5;
-      logJournal("A notable critic mentioned your work. Reputation improved.");
+      logJournal("Word of your talent spreads through whispers in literary circles.");
     },
     () => {
       player.mood = "Anxious";
-      logJournal("Self-doubt creeps in. Your mood is affected.");
+      logJournal("Self-doubt clouds your thoughts, and anxiety creeps in.");
     },
   ];
 
@@ -337,3 +356,26 @@ function addResources() {
   updateStatus();
 }
 
+function toggleDropdown(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('nav ul li button')) {
+    const dropdowns = document.getElementsByClassName('dropdown-content');
+    for (let i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+};
+
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
