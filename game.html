@@ -3,97 +3,109 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Poet's Journey</title>
+  <title>Poet's Odyssey</title>
   <link rel="stylesheet" href="gamestyles.css">
 </head>
 
 <body onload="startupTasks()">
   <header>
-    <h1>Poet's Journey</h1>
-    <h2>Day: <span id="daycount">1</span></h2>
-    <button onclick="toggleCheatMode()">Toggle Developer Tools</button>
+    <h1>Poet's Odyssey</h1>
+    <nav>
+      <ul>
+        <li><button onclick="toggleDropdown('actionDropdown')">Actions &#x25BC;</button>
+          <div id="actionDropdown" class="dropdown-content">
+            <button onclick="writePoem()">Compose Poetry</button>
+            <button onclick="attendReading()">Attend Reading</button>
+            <button onclick="joinWorkshop()">Join Workshop</button>
+            <button onclick="networkEvent()">Network Event</button>
+            <button onclick="relax()">Relax</button>
+          </div>
+        </li>
+        <li><button onclick="toggleDropdown('manageDropdown')">Manage Work &#x25BC;</button>
+          <div id="manageDropdown" class="dropdown-content">
+            <button onclick="showEditModal()">Edit Poem</button>
+            <button onclick="showSubmitModal()">Submit Poem</button>
+          </div>
+        </li>
+        <li><button onclick="toggleCheatMode()">Dev Tools</button></li>
+      </ul>
+    </nav>
   </header>
 
   <main>
     <section id="status">
-      <h2>Your Status</h2>
-      <div class="stats">
-        <div>
-          <h3>Inspiration</h3>
-          <p id="inspiration">50</p>
-        </div>
-        <div>
-          <h3>Energy</h3>
-          <p id="energy">100</p>
-        </div>
-        <div>
-          <h3>Reputation</h3>
-          <p id="reputation">Unknown</p>
-        </div>
-        <div>
-          <h3>Mood</h3>
-          <p id="mood">Content</p>
-        </div>
+      <div class="status-item">
+        <h2>Day</h2>
+        <p id="daycount">1</p>
       </div>
-    </section>
-
-    <section id="actions">
-      <h2>Today's Activities</h2>
-      <div class="action-buttons">
-        <button onclick="writePoem()">Compose Poetry</button>
-        <button onclick="attendReading()">Attend Poetry Reading</button>
-        <button onclick="joinWorkshop()">Participate in Workshop</button>
-        <button onclick="networkEvent()">Go to Networking Event</button>
-        <button onclick="relax()">Relax and Reflect</button>
+      <div class="status-item">
+        <h2>Inspiration</h2>
+        <p id="inspiration">50</p>
       </div>
-
-      <div class="accordion">
-        <button class="accordion-button">Edit Your Work</button>
-        <div class="accordion-content">
-          <p>Select a poem to edit:</p>
-          <select id="poemToEdit">
-            <option value="">-- Choose Poem --</option>
-          </select>
-          <button onclick="editPoem()">Edit Poem</button>
-        </div>
+      <div class="status-item">
+        <h2>Energy</h2>
+        <p id="energy">100</p>
       </div>
-
-      <div class="accordion">
-        <button class="accordion-button">Submit to Publication</button>
-        <div class="accordion-content">
-          <p>Select a poem to submit:</p>
-          <select id="poemToSubmit">
-            <option value="">-- Choose Poem --</option>
-          </select>
-          <p>Select a publication:</p>
-          <select id="publicationToSubmit">
-            <option value="">-- Choose Publication --</option>
-          </select>
-          <button onclick="submitPoem()">Submit Poem</button>
-        </div>
+      <div class="status-item">
+        <h2>Reputation</h2>
+        <p id="reputation">Unknown</p>
+      </div>
+      <div class="status-item">
+        <h2>Mood</h2>
+        <p id="mood">Content</p>
       </div>
     </section>
 
     <section id="journal">
       <h2>Journal</h2>
       <div id="journalEntries">
-        <p>> Welcome to your poetic journey. Each day brings new opportunities.</p>
+        <p>Day 1: You stand at the dawn of your poetic journey, the quill eager in your hand.</p>
       </div>
     </section>
 
     <section id="portfolio">
-      <h2>Your Portfolio</h2>
       <div>
-        <h3>Unpublished Poems</h3>
+        <h2>Unpublished Poems</h2>
         <ul id="unpublishedPoemsList"></ul>
       </div>
       <div>
-        <h3>Published Works</h3>
+        <h2>Published Works</h2>
         <ul id="publishedPoemsList"></ul>
       </div>
     </section>
   </main>
 
+  <!-- Edit Poem Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('editModal')">&times;</span>
+      <h2>Edit Poem</h2>
+      <p>Select a poem to edit:</p>
+      <select id="poemToEdit">
+        <option value="">-- Choose Poem --</option>
+      </select>
+      <button onclick="editPoem()">Edit Selected Poem</button>
+    </div>
+  </div>
+
+  <!-- Submit Poem Modal -->
+  <div id="submitModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('submitModal')">&times;</span>
+      <h2>Submit Poem</h2>
+      <p>Select a poem to submit:</p>
+      <select id="poemToSubmit">
+        <option value="">-- Choose Poem --</option>
+      </select>
+      <p>Select a publication:</p>
+      <select id="publicationToSubmit">
+        <option value="">-- Choose Publication --</option>
+      </select>
+      <button onclick="submitPoem()">Submit Poem</button>
+    </div>
+  </div>
+
+  <!-- Developer Tools -->
   <div id="cheatMode" hidden>
     <h2>Developer Tools</h2>
     <p>Player Stats:</p>
