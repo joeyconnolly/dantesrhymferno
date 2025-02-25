@@ -1,1 +1,334 @@
+/*
+ * responsive.css - Essential Responsive Design for "The Depths of Poetry"
+ * 
+ * A distilled framework that ensures the poetic experience remains
+ * coherent across varied reading contexts and devices.
+ */
 
+/* Responsive Breakpoints */
+:root {
+    --breakpoint-sm: 480px;   /* Mobile portrait */
+    --breakpoint-md: 768px;   /* Tablet/Mobile landscape */
+    --breakpoint-lg: 1024px;  /* Small desktop/Tablet landscape */
+    --breakpoint-xl: 1280px;  /* Desktop */
+}
+
+/* Base Container */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Large Desktop Optimizations */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    /* Enhanced reading experience */
+    .section-padding {
+        padding: 4rem 0;
+    }
+    
+    /* Expanded grid layouts */
+    .course-overview,
+    .highlights-grid,
+    .anthology-grid,
+    .resources-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    
+    /* Refined typography */
+    .literary-quote {
+        padding: 2.5rem 3rem;
+        font-size: 1.3rem;
+    }
+}
+
+/* Desktop/Small Laptop */
+@media (max-width: 1280px) {
+    .container {
+        max-width: 1000px;
+    }
+    
+    /* Grid adjustments */
+    .highlights-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .section-padding {
+        padding: 3rem 0;
+    }
+}
+
+/* Tablet/Small Desktop */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 900px;
+    }
+    
+    /* Footer restructuring */
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+    
+    /* Component refinements */
+    .approach-item {
+        padding: 1.25rem;
+    }
+    
+    /* Poet biography layout change */
+    .poet-biography {
+        flex-direction: column;
+    }
+    
+    .poet-portrait {
+        margin: 0 auto 1rem;
+    }
+    
+    .poet-details {
+        text-align: center;
+    }
+}
+
+/* Tablet/Mobile Landscape */
+@media (max-width: 768px) {
+    /* Header transformations */
+    .header-container {
+        flex-direction: column;
+        padding: 0.75rem 0;
+    }
+    
+    nav ul {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    
+    nav li {
+        margin: 0 0.75rem;
+    }
+    
+    /* Hero adjustments */
+    .hero {
+        padding: 3rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-cta {
+        flex-direction: column;
+    }
+    
+    /* Grid reconfigurations */
+    .course-overview,
+    .highlights-grid,
+    .testimonials-container,
+    .anthology-grid,
+    .resources-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Component modifications */
+    .literary-quote {
+        padding: 2rem;
+        font-size: 1.1rem;
+    }
+    
+    /* CTA adjustments */
+    .cta-buttons {
+        flex-direction: column;
+    }
+    
+    /* Footer simplification */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    /* Mobile navigation */
+    nav ul {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+        margin-top: 0.5rem;
+    }
+    
+    .mobile-menu-open nav ul {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--primary-color);
+        padding: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+    }
+    
+    .mobile-menu-open nav li {
+        margin: 0.5rem 0;
+    }
+    
+    /* Typography adjustments */
+    .hero h1 {
+        font-size: 1.75rem;
+    }
+    
+    /* Component simplification */
+    .approach-item {
+        flex-direction: column;
+    }
+    
+    .approach-icon {
+        margin-right: 0;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Week card and content adjustments */
+    .week-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .week-content.active {
+        padding: 1rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #1e2a38;
+        --accent-color: #9b59b6;
+        --light-accent: #8e44ad;
+        --background-color: #121212;
+        --text-color: #e0e0e0;
+        --secondary-text: #a0a0a0;
+        --light-gray: #1e1e1e;
+        --border-color: #333333;
+    }
+    
+    /* Card and container backgrounds */
+    .overview-card,
+    .highlight-card,
+    .approach-item,
+    .testimonial,
+    .week-card,
+    .course-objectives,
+    .community-card,
+    .interactive-element,
+    .resource-card,
+    .anthology-card {
+        background-color: #1e1e1e;
+    }
+    
+    /* Secondary backgrounds */
+    .literary-quote,
+    .poem-details,
+    .theme-tag {
+        background-color: #1a1a1a;
+    }
+}
+
+/* Print Optimization */
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+    }
+    
+    /* Hide interactive elements */
+    header,
+    footer,
+    .hero-cta,
+    .mobile-menu-btn,
+    .cta-container {
+        display: none;
+    }
+    
+    /* Display all content */
+    .week-content {
+        max-height: none !important;
+        padding: 1.5rem !important;
+        display: block !important;
+    }
+    
+    /* Remove decorative elements */
+    .section-title::after,
+    .literary-quote:before {
+        display: none;
+    }
+    
+    /* Convert links for print */
+    a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+    
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 90%;
+    }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .overview-card:hover,
+    .highlight-card:hover,
+    .btn:hover {
+        transform: none !important;
+    }
+}
+
+/* Screen Reader Access */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus States */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
