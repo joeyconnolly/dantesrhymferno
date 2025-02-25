@@ -1,0 +1,335 @@
+/*
+ * typography.css - Typography System for "The Depths of Poetry"
+ * 
+ * A distilled typography framework that establishes textual hierarchies
+ * and creates an environment conducive to poetic contemplation.
+ */
+
+:root {
+    /* Font Scale */
+    --font-size-xs: 0.75rem;   
+    --font-size-sm: 0.875rem;  
+    --font-size-base: 1rem;    
+    --font-size-md: 1.125rem;  
+    --font-size-lg: 1.25rem;   
+    --font-size-xl: 1.5rem;    
+    --font-size-2xl: 1.875rem; 
+    --font-size-3xl: 2.25rem;  
+    
+    /* Line Heights */
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    --line-height-loose: 2;
+    
+    /* Letter Spacing */
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    
+    /* Font Weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+}
+
+/* Base Typography */
+body {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    font-weight: var(--font-weight-normal);
+    text-rendering: optimizeLegibility;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headers);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+h1 {
+    font-size: var(--font-size-3xl);
+    letter-spacing: var(--letter-spacing-tight);
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: 1.25rem;
+}
+
+h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: 1rem;
+}
+
+h4 {
+    font-size: var(--font-size-lg);
+    margin-bottom: 0.75rem;
+}
+
+h5 {
+    font-size: var(--font-size-md);
+    margin-bottom: 0.5rem;
+}
+
+h6 {
+    font-size: var(--font-size-base);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 1.5rem;
+}
+
+.lead {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: 2rem;
+}
+
+/* Emphasis */
+strong, b {
+    font-weight: var(--font-weight-bold);
+}
+
+em, i {
+    font-style: italic;
+}
+
+/* Links */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--light-accent);
+}
+
+/* Lists */
+ul, ol {
+    margin: 0 0 1.5rem 1.25rem;
+}
+
+ul li, ol li {
+    margin-bottom: 0.5rem;
+}
+
+/* Poetry Specific Typography */
+.poem-text {
+    font-family: var(--font-reading);
+    line-height: var(--line-height-loose);
+    margin: 2rem 0;
+    padding-left: 2rem;
+}
+
+.poem-line {
+    margin-bottom: 0.25rem;
+}
+
+.poem-stanza {
+    margin-bottom: 1.5rem;
+}
+
+.poem-attribution {
+    font-style: italic;
+    text-align: right;
+    margin-top: 1rem;
+    font-size: var(--font-size-sm);
+}
+
+/* Quote Styles */
+blockquote {
+    font-family: var(--font-reading);
+    font-style: italic;
+    line-height: var(--line-height-relaxed);
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+    border-left: 4px solid var(--accent-color);
+    background-color: rgba(142, 68, 173, 0.05);
+}
+
+blockquote cite {
+    display: block;
+    font-style: normal;
+    font-size: var(--font-size-sm);
+    margin-top: 1rem;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Section Titles */
+.section-title {
+    font-size: var(--font-size-2xl);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent-color);
+}
+
+.section-intro {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    max-width: 800px;
+    margin-bottom: 2.5rem;
+    color: var(--secondary-text);
+}
+
+/* Literary Citations */
+.literary-quote {
+    font-family: var(--font-reading);
+    font-size: 1.2rem;
+    line-height: 1.8;
+    padding: 2rem;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.literary-quote:before {
+    content: """;
+    font-size: 4rem;
+    font-family: Georgia, serif;
+    color: var(--accent-color);
+    opacity: 0.3;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+}
+
+.quote-attribution {
+    font-style: italic;
+    text-align: right;
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+/* Poet Information */
+.poet-info {
+    margin-top: 0.5rem;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
+/* Text Alignments */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Poetic Terminology */
+.term-definition {
+    font-family: var(--font-reading);
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: var(--light-gray);
+    border-radius: 0.5rem;
+}
+
+.term-definition dt {
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-md);
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.term-definition dd {
+    margin-bottom: 1.5rem;
+    margin-left: 0;
+}
+
+/* Example Highlights */
+.example {
+    font-style: italic;
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--accent-color);
+}
+
+/* Exercise Instructions */
+.exercise-instruction {
+    font-family: var(--font-headers);
+    font-size: var(--font-size-md);
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    h1 {
+        font-size: var(--font-size-2xl);
+    }
+    
+    h2 {
+        font-size: var(--font-size-xl);
+    }
+    
+    h3 {
+        font-size: var(--font-size-lg);
+    }
+    
+    .section-intro {
+        font-size: var(--font-size-base);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-base: 0.9375rem;
+    }
+    
+    h1 {
+        font-size: var(--font-size-xl);
+    }
+    
+    h2 {
+        font-size: var(--font-size-lg);
+    }
+    
+    .section-title::after {
+        width: 40px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: black;
+    }
+    
+    h1 {
+        font-size: 24pt;
+    }
+    
+    h2 {
+        font-size: 20pt;
+    }
+    
+    a {
+        color: black;
+        text-decoration: underline;
+    }
+}
