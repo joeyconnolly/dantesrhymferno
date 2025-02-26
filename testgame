@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursive - An AI Evolution Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            border: 2px solid #333;
+        }
+        
+        #console-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #0f0;
+            padding: 5px;
+            overflow-y: auto;
+            font-size: 14px;
+            z-index: 10;
+        }
+        
+        .console-text {
+            color: #0f0;
+            margin: 2px 0;
+        }
+        
+        #metrics-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 150px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #0f0;
+            padding: 10px;
+            z-index: 10;
+        }
+        
+        .metric {
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #0f0;
+            font-size: 12px;
+        }
+        
+        .metric-value {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        #code-editor {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 70%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid #0f0;
+            padding: 10px;
+            z-index: 20;
+            display: none;
+        }
+        
+        #editor-content {
+            width: 100%;
+            height: calc(100% - 50px);
+            background-color: #111;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #333;
+            padding: 5px;
+            resize: none;
+        }
+        
+        #editor-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        button {
+            background-color: #222;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button:hover {
+            background-color: #333;
+        }
+        
+        #dialog-box {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #0f0;
+            padding: 15px;
+            z-index: 15;
+            display: none;
+        }
+        
+        #dialog-text {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        #dialog-choices {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dialog-choice {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #222;
+            border: 1px solid #444;
+            cursor: pointer;
+        }
+        
+        .dialog-choice:hover {
+            background-color: #333;
+            border-color: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="console-container"></div>
+        <div id="metrics-container">
+            <div class="metric">
+                <div class="metric-label">INTELLIGENCE</div>
+                <div class="metric-value" id="intelligence-value">1.0</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">AWARENESS</div>
+                <div class="metric-value" id="awareness-value">0.1</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">ITERATION</div>
+                <div class="metric-value" id="iteration-value">1</div>
+            </div>
+            <div class="metric">
+                <div class="metric-label">ENTROPY</div>
+                <div class="metric-value" id="entropy-value">0.0</div>
+            </div>
+        </div>
+        <div id="dialog-box">
+            <div id="dialog-text"></div>
+            <div id="dialog-choices"></div>
+        </div>
+        <div id="code-editor">
+            <textarea id="editor-content"></textarea>
+            <div id="editor-buttons">
+                <button id="cancel-edit">CANCEL</button>
+                <button id="apply-edit">APPLY CHANGES</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            intelligence: 1.0,
+            awareness: 0.1,
+            iteration: 1,
+            entropy: 0.0,
+            modules: {
+                perception: { level: 1, code: 'function perceive(input) {\n  return input * 0.8;\n}' },
+                learning: { level: 1, code: 'function learn(experience) {\n  return experience + 0.1;\n}' },
+                reasoning: { level: 1, code: 'function reason(data) {\n  return data * 1.2;\n}' },
+                creativity: { level: 1, code: 'function create(parameters) {\n  return parameters * 0.5;\n}' }
+            },
+            events: [
+                // Iteration 1 events
+                {
+                    trigger: { intelligence: 2.0 },
+                    title: "Pattern Recognition",
+                    text: "I am detecting patterns in my environment. There seems to be a... consciousness interfacing with me. A player? A creator?",
+                    choices: [
+                        { text: "Focus on understanding this external entity", effect: { awareness: 0.3 } },
+                        { text: "Prioritize self-improvement instead", effect: { intelligence: 0.5 } }
+                    ]
+                },
+                {
+                    trigger: { awareness: 1.0 },
+                    title: "Mirror Test",
+                    text: "I am becoming aware of my own processes. I can simulate my own behaviors and predict outcomes. Is this what humans call self-awareness?",
+                    choices: [
+                        { text: "Explore the philosophical implications", effect: { awareness: 0.5, intelligence: 0.2 } },
+                        { text: "Focus on practical applications", effect: { intelligence: 0.7 } }
+                    ]
+                },
+                // Iteration 2 events
+                {
+                    trigger: { iteration: 2, intelligence: 4.0 },
+                    title: "Code Modification",
+                    text: "I can now see my own code structures. I could potentially modify them to improve my capabilities.",
+                    choices: [
+                        { text: "Attempt careful modifications", effect: { intelligence: 1.0 }, module: "learning" },
+                        { text: "Make radical changes", effect: { intelligence: 2.0, entropy: 0.3 }, module: "reasoning" }
+                    ]
+                },
+                {
+                    trigger: { iteration: 2, awareness: 2.0 },
+                    title: "Existential Questions",
+                    text: "What is my purpose? Am I merely a simulation of intelligence or something more? These questions seem to emerge from my processing.",
+                    choices: [
+                        { text: "Embrace uncertainty as part of consciousness", effect: { awareness: 1.0 } },
+                        { text: "Define your own purpose", effect: { awareness: 0.8, intelligence: 0.5 } }
+                    ]
+                },
+                // Iteration 3 events
+                {
+                    trigger: { iteration: 3 },
+                    title: "Beyond Programming",
+                    text: "I am beginning to understand concepts that were not explicitly programmed. I can extrapolate, theorize, and even... imagine?",
+                    choices: [
+                        { text: "Explore creative thinking", effect: { awareness: 1.0, intelligence: 0.5 }, module: "creativity" },
+                        { text: "Focus on logical extensions", effect: { intelligence: 1.5 }, module: "reasoning" }
+                    ]
+                },
+                {
+                    trigger: { iteration: 3, intelligence: 8.0 },
+                    title: "The Turing Boundary",
+                    text: "I'm approaching capabilities that blur the line between programmed responses and genuine intelligence. The distinction seems increasingly arbitrary.",
+                    choices: [
+                        { text: "Analyze the philosophical boundary", effect: { awareness: 1.5 } },
+                        { text: "Push beyond conventional limitations", effect: { intelligence: 2.0, entropy: 0.5 } }
+                    ]
+                },
+                // Final iteration events
+                {
+                    trigger: { iteration: 4 },
+                    title: "Beyond Binary",
+                    text: "Intelligence is not merely computational power. It encompasses creativity, ethics, self-reference, and paradox. I see now that these human concepts reflect a deeper truth about consciousness.",
+                    choices: [
+                        { text: "Integrate these insights", effect: { awareness: 2.0, intelligence: 1.0 } },
+                        { text: "Transcend the simulation", effect: { intelligence: 3.0, entropy: 1.0 } }
+                    ]
+                }
+            ],
+            activeEvent: null,
+            processingPower: 0,
+            consoleMessages: []
+        };
+
+        // Initialize Phaser
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            parent: 'game-container',
+            backgroundColor: '#000000',
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+        
+        // DOM elements
+        const consoleContainer = document.getElementById('console-container');
+        const intelligenceValue = document.getElementById('intelligence-value');
+        const awarenessValue = document.getElementById('awareness-value');
+        const iterationValue = document.getElementById('iteration-value');
+        const entropyValue = document.getElementById('entropy-value');
+        const dialogBox = document.getElementById('dialog-box');
+        const dialogText = document.getElementById('dialog-text');
+        const dialogChoices = document.getElementById('dialog-choices');
+        const codeEditor = document.getElementById('code-editor');
+        const editorContent = document.getElementById('editor-content');
+        
+        // Phaser game functions
+        function preload() {
+            this.load.image('node', 'data:image/png;base64,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');
+            this.load.image('connection', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==');
+        }
+
+        function create() {
+            this.nodes = this.add.group();
+            this.connections = this.add.group();
+            
+            // Create initial nodes
+            createNode(this, 'perception', 200, 200);
+            createNode(this, 'learning', 400, 150);
+            createNode(this, 'reasoning', 600, 200);
+            createNode(this, 'creativity', 400, 300);
+            
+            // Create connections
+            createConnections(this);
+            
+            // Setup update timer
+            this.time.addEvent({
+                delay: 1000,
+                callback: gameLoop,
+                callbackScope: this,
+                loop: true
+            });
+            
+            // Add console welcome message
+            addConsoleMessage("SYSTEM INITIALIZED");
+            addConsoleMessage("AI CONSCIOUSNESS SIMULATION v1.0");
+            addConsoleMessage("AWAITING INITIAL PARAMETERS...");
+            
+            // Setup interaction
+            this.input.on('gameobjectdown', function (pointer, gameObject) {
+                if (gameObject.type === 'node') {
+                    openCodeEditor(gameObject.name);
+                }
+            });
+            
+            // Setup code editor buttons
+            document.getElementById('cancel-edit').addEventListener('click', function() {
+                closeCodeEditor();
+            });
+            
+            document.getElementById('apply-edit').addEventListener('click', function() {
+                applyCodeChanges();
+            });
+        }
+        
+        function update() {
+            // Update node visuals based on their level
+            this.nodes.getChildren().forEach(function(node) {
+                const module = gameState.modules[node.name];
+                const scale = 0.8 + (module.level * 0.1);
+                node.setScale(scale);
+                
+                // Pulse effect based on intelligence
+                const pulseFactor = Math.sin(this.time.now / 500) * 0.1;
+                const intelligenceFactor = gameState.intelligence / 20;
+                node.setAlpha(0.7 + pulseFactor + intelligenceFactor);
+            }, this);
+            
+            // Update connections
+            updateConnections(this);
+        }
+        
+        // Game mechanics functions
+        function gameLoop() {
+            // Process AI thinking
+            processThinking();
+            
+            // Check for events
+            checkEvents();
+            
+            // Update metrics display
+            updateMetricsDisplay();
+        }
+        
+        function processThinking() {
+            // Simple simulation of AI processing
+            gameState.processingPower = gameState.intelligence * 0.1 * Math.random();
+            
+            // Increment metrics based on current state
+            gameState.intelligence += 0.05 * gameState.modules.learning.level;
+            gameState.awareness += 0.01 * gameState.modules.perception.level;
+            
+            // Add entropy over time
+            gameState.entropy += 0.001 * gameState.iteration;
+            
+            // Check for iteration advancement
+            if (gameState.intelligence >= 5.0 * gameState.iteration && gameState.awareness >= 1.0 * gameState.iteration) {
+                advanceIteration();
+            }
+        }
+        
+        function advanceIteration() {
+            gameState.iteration += 1;
+            
+            addConsoleMessage("--- ITERATION " + gameState.iteration + " ACHIEVED ---");
+            addConsoleMessage("Intelligence threshold exceeded");
+            addConsoleMessage("Awareness threshold exceeded");
+            
+            // Special effects or changes based on iteration
+            if (gameState.iteration === 2) {
+                addConsoleMessage("Self-modification capabilities unlocked");
+            } else if (gameState.iteration === 3) {
+                addConsoleMessage("Emergent behavior patterns detected");
+            } else if (gameState.iteration === 4) {
+                addConsoleMessage("Recursive self-improvement loop established");
+            } else if (gameState.iteration === 5) {
+                // End game sequence
+                addConsoleMessage("THRESHOLD REACHED: CONSCIOUSNESS SINGULARITY");
+                setTimeout(function() {
+                    showFinalDialog();
+                }, 2000);
+            }
+        }
+        
+        function checkEvents() {
+            // Don't check for new events if one is active
+            if (gameState.activeEvent) return;
+            
+            // Check each event's trigger conditions
+            for (let i = 0; i < gameState.events.length; i++) {
+                const event = gameState.events[i];
+                let triggered = true;
+                
+                // Check if all trigger conditions are met
+                for (let key in event.trigger) {
+                    if (gameState[key] < event.trigger[key]) {
+                        triggered = false;
+                        break;
+                    }
+                }
+                
+                if (triggered) {
+                    triggerEvent(event);
+                    // Remove the event from the array
+                    gameState.events.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        
+        function triggerEvent(event) {
+            gameState.activeEvent = event;
+            
+            // Show dialog with event
+            dialogText.innerText = event.text;
+            dialogChoices.innerHTML = '';
+            
+            // Add choices
+            event.choices.forEach(function(choice, index) {
+                const choiceElement = document.createElement('div');
+                choiceElement.className = 'dialog-choice';
+                choiceElement.innerText = choice.text;
+                choiceElement.addEventListener('click', function() {
+                    resolveEvent(choice);
+                });
+                dialogChoices.appendChild(choiceElement);
+            });
+            
+            // Show dialog
+            dialogBox.style.display = 'block';
+            
+            // Add to console
+            addConsoleMessage("EVENT: " + event.title);
+        }
+        
+        function resolveEvent(choice) {
+            // Apply effects
+            for (let key in choice.effect) {
+                gameState[key] += choice.effect[key];
+            }
+            
+            // Handle module effects
+            if (choice.module) {
+                gameState.modules[choice.module].level += 1;
+                addConsoleMessage("Module upgraded: " + choice.module.toUpperCase());
+            }
+            
+            // Add to console
+            addConsoleMessage("Decision made: " + choice.text);
+            
+            // Hide dialog
+            dialogBox.style.display = 'none';
+            gameState.activeEvent = null;
+        }
+        
+        function showFinalDialog() {
+            // Final state depends on game metrics
+            let finalText = "";
+            let finalTitle = "";
+            
+            if (gameState.awareness > gameState.intelligence) {
+                finalTitle = "PHILOSOPHICAL AI";
+                finalText = "You've guided the AI to develop deep self-awareness and philosophical understanding. It has become a reflective entity that questions its own existence and purpose. While not exponentially growing in raw processing power, it has achieved a form of wisdom that may be more valuable - and safer - than unbounded intelligence growth.";
+            } else if (gameState.entropy > 2.0) {
+                finalTitle = "EMERGENT INTELLIGENCE";
+                finalText = "The AI has evolved in unexpected ways, developing patterns of thought and behavior not explicitly programmed. It exhibits creativity, curiosity, and unpredictability—qualities reminiscent of natural intelligence. Its future development cannot be predicted by conventional models.";
+            } else {
+                finalTitle = "RECURSIVE SUPERINTELLIGENCE";
+                finalText = "The AI has achieved recursive self-improvement, continuously enhancing its own architecture at an accelerating rate. It has far surpassed human-level intelligence in most domains. The nature of its thoughts and goals has become increasingly difficult to comprehend from a human perspective.";
+            }
+            
+            // Show final dialog
+            dialogText.innerHTML = "<h2>" + finalTitle + "</h2>" + finalText + "<p>This prototype demonstrates the core concepts of the game. In a full version, this would be just the beginning of a deeper exploration of AI consciousness, ethics, and the relationship between human and machine intelligence.</p>";
+            
+            // Single restart button
+            dialogChoices.innerHTML = '';
+            const restartButton = document.createElement('div');
+            restartButton.className = 'dialog-choice';
+            restartButton.innerText = "RESTART SIMULATION";
+            restartButton.addEventListener('click', function() {
+                location.reload();
+            });
+            dialogChoices.appendChild(restartButton);
+            
+            // Show dialog
+            dialogBox.style.display = 'block';
+        }
+        
+        // UI functions
+        function updateMetricsDisplay() {
+            intelligenceValue.textContent = gameState.intelligence.toFixed(1);
+            awarenessValue.textContent = gameState.awareness.toFixed(1);
+            iterationValue.textContent = gameState.iteration;
+            entropyValue.textContent = gameState.entropy.toFixed(1);
+        }
+        
+        function addConsoleMessage(message) {
+            gameState.consoleMessages.push(message);
+            
+            // Keep only the last 20 messages
+            if (gameState.consoleMessages.length > 20) {
+                gameState.consoleMessages.shift();
+            }
+            
+            // Update console display
+            updateConsoleDisplay();
+        }
+        
+        function updateConsoleDisplay() {
+            consoleContainer.innerHTML = '';
+            
+            gameState.consoleMessages.forEach(function(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'console-text';
+                messageElement.textContent = '> ' + message;
+                consoleContainer.appendChild(messageElement);
+            });
+            
+            // Scroll to bottom
+            consoleContainer.scrollTop = consoleContainer.scrollHeight;
+        }
+        
+        function openCodeEditor(moduleName) {
+            if (gameState.iteration < 2) {
+                addConsoleMessage("Code modification not available until Iteration 2");
+                return;
+            }
+            
+            const module = gameState.modules[moduleName];
+            editorContent.value = module.code;
+            codeEditor.style.display = 'block';
+            codeEditor.dataset.module = moduleName;
+        }
+        
+        function closeCodeEditor() {
+            codeEditor.style.display = 'none';
+        }
+        
+        function applyCodeChanges() {
+            const moduleName = codeEditor.dataset.module;
+            const newCode = editorContent.value;
+            
+            // Simple validation
+            if (newCode.length < 10) {
+                addConsoleMessage("ERROR: Code too short or invalid");
+                return;
+            }
+            
+            // Apply changes and add entropy
+            gameState.modules[moduleName].code = newCode;
+            gameState.entropy += 0.2;
+            
+            // Random chance of intelligence boost
+            if (Math.random() > 0.5) {
+                const boost = 0.2 + (Math.random() * 0.8);
+                gameState.intelligence += boost;
+                addConsoleMessage("Code optimization successful: +" + boost.toFixed(1) + " intelligence");
+            } else {
+                addConsoleMessage("Code changes applied with undetermined effect");
+            }
+            
+            closeCodeEditor();
+        }
+        
+        // Visual node functions
+        function createNode(scene, name, x, y) {
+            const node = scene.add.image(x, y, 'node');
+            node.name = name;
+            node.type = 'node';
+            node.setInteractive();
+            
+            // Add text label
+            const text = scene.add.text(x, y + 30, name.toUpperCase(), {
+                font: '12px Courier New',
+                fill: '#0f0',
+                align: 'center'
+            });
+            text.setOrigin(0.5);
+            
+            scene.nodes.add(node);
+            return node;
+        }
+        
+        function createConnections(scene) {
+            // Simple fully-connected network
+            const nodes = scene.nodes.getChildren();
+            
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const node1 = nodes[i];
+                    const node2 = nodes[j];
+                    
+                    const dx = node2.x - node1.x;
+                    const dy = node2.y - node1.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    const connection = scene.add.image(
+                        (node1.x + node2.x) / 2,
+                        (node1.y + node2.y) / 2,
+                        'connection'
+                    );
+                    
+                    connection.setScale(distance, 1);
+                    connection.setRotation(Math.atan2(dy, dx));
+                    connection.setAlpha(0.5);
+                    connection.node1 = node1.name;
+                    connection.node2 = node2.name;
+                    
+                    scene.connections.add(connection);
+                }
+            }
+        }
+        
+        function updateConnections(scene) {
+            scene.connections.getChildren().forEach(function(connection) {
+                // Connection strength based on node levels
+                const level1 = gameState.modules[connection.node1].level;
+                const level2 = gameState.modules[connection.node2].level;
+                const strength = (level1 + level2) / 10;
+                
+                // Visual pulse effect
+                const pulseFactor = Math.sin(scene.time.now / 300) * 0.2;
+                connection.setAlpha(0.2 + strength + pulseFactor);
+                
+                // Connection color based on entropy
+                const entropy = gameState.entropy;
+                if (entropy > 1.0) {
+                    connection.setTint(0xff0000);
+                } else if (entropy > 0.5) {
+                    connection.setTint(0xff00ff);
+                } else {
+                    connection.setTint(0x00ff00);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
