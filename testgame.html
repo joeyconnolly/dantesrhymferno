@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recursive - An AI Evolution Game</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
     <style>
         body {
             margin: 0;
@@ -304,51 +304,94 @@
         
         // Phaser game functions
         function preload() {
-            this.load.image('node', 'data:image/png;base64,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');
-            this.load.image('connection', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGD4DwABBAEAfbLI3wAAAABJRU5ErkJggg==');
+            console.log("Preload function started");
+            
+            try {
+                // Create circle texture for nodes
+                const nodeGraphics = this.make.graphics({x: 0, y: 0, add: false});
+                nodeGraphics.fillStyle(0x00ff00, 1);
+                nodeGraphics.fillCircle(20, 20, 20);
+                nodeGraphics.generateTexture('node', 40, 40);
+                
+                // Create line texture for connections
+                const connectionGraphics = this.make.graphics({x: 0, y: 0, add: false});
+                connectionGraphics.fillStyle(0x00ff00, 1);
+                connectionGraphics.fillRect(0, 0, 1, 1);
+                connectionGraphics.generateTexture('connection', 1, 1);
+                
+                console.log("Created textures programmatically");
+                
+                // Add error handling
+                this.load.on('loaderror', function(file) {
+                    console.error('Error loading asset:', file.src);
+                    addConsoleMessage("ERROR: Failed to load asset: " + file.key);
+                });
+                
+                console.log("Preload function completed successfully");
+            } catch (error) {
+                console.error("Error in preload function:", error);
+                addConsoleMessage("ERROR: " + error.message);
+            }
         }
 
         function create() {
+            console.log("Create function started");
+            
+            // Initialize our groups
             this.nodes = this.add.group();
             this.connections = this.add.group();
             
-            // Create initial nodes
-            createNode(this, 'perception', 200, 200);
-            createNode(this, 'learning', 400, 150);
-            createNode(this, 'reasoning', 600, 200);
-            createNode(this, 'creativity', 400, 300);
+            // Add console welcome message first for better debug visibility
+            addConsoleMessage("SYSTEM INITIALIZING...");
             
-            // Create connections
-            createConnections(this);
-            
-            // Setup update timer
-            this.time.addEvent({
-                delay: 1000,
-                callback: gameLoop,
-                callbackScope: this,
-                loop: true
-            });
-            
-            // Add console welcome message
-            addConsoleMessage("SYSTEM INITIALIZED");
-            addConsoleMessage("AI CONSCIOUSNESS SIMULATION v1.0");
-            addConsoleMessage("AWAITING INITIAL PARAMETERS...");
-            
-            // Setup interaction
-            this.input.on('gameobjectdown', function (pointer, gameObject) {
-                if (gameObject.type === 'node') {
-                    openCodeEditor(gameObject.name);
-                }
-            });
-            
-            // Setup code editor buttons
-            document.getElementById('cancel-edit').addEventListener('click', function() {
-                closeCodeEditor();
-            });
-            
-            document.getElementById('apply-edit').addEventListener('click', function() {
-                applyCodeChanges();
-            });
+            try {
+                // Create initial nodes
+                console.log("Creating nodes");
+                createNode(this, 'perception', 200, 200);
+                createNode(this, 'learning', 400, 150);
+                createNode(this, 'reasoning', 600, 200);
+                createNode(this, 'creativity', 400, 300);
+                
+                console.log("Creating connections");
+                // Create connections
+                createConnections(this);
+                
+                // Setup update timer
+                this.time.addEvent({
+                    delay: 1000,
+                    callback: gameLoop,
+                    callbackScope: this,
+                    loop: true
+                });
+                
+                // Add console welcome messages
+                addConsoleMessage("SYSTEM INITIALIZED");
+                addConsoleMessage("AI CONSCIOUSNESS SIMULATION v1.0");
+                addConsoleMessage("AWAITING INITIAL PARAMETERS...");
+                
+                console.log("Setting up interaction");
+                // Setup interaction
+                this.input.on('gameobjectdown', function (pointer, gameObject) {
+                    if (gameObject.type === 'node') {
+                        openCodeEditor(gameObject.name);
+                    }
+                });
+                
+                console.log("Setting up buttons");
+                // Setup code editor buttons
+                document.getElementById('cancel-edit').addEventListener('click', function() {
+                    closeCodeEditor();
+                });
+                
+                document.getElementById('apply-edit').addEventListener('click', function() {
+                    applyCodeChanges();
+                });
+                
+                console.log("Create function completed successfully");
+            } catch (error) {
+                console.error("Error in create function:", error);
+                addConsoleMessage("ERROR: " + error.message);
+            }
         }
         
         function update() {
@@ -602,6 +645,17 @@
         
         // Visual node functions
         function createNode(scene, name, x, y) {
+            // Check if texture exists
+            if (!scene.textures.exists('node')) {
+                // Create a circle as fallback
+                const graphics = scene.add.graphics();
+                graphics.fillStyle(0x00ff00, 1);
+                graphics.fillCircle(0, 0, 20);
+                graphics.generateTexture('node', 40, 40);
+                console.log("Created fallback node texture");
+                addConsoleMessage("Created fallback node texture");
+            }
+            
             const node = scene.add.image(x, y, 'node');
             node.name = name;
             node.type = 'node';
@@ -620,9 +674,26 @@
         }
         
         function createConnections(scene) {
-            // Simple fully-connected network
+            // First check if we have any nodes
             const nodes = scene.nodes.getChildren();
+            if (nodes.length === 0) {
+                console.error("No nodes to connect");
+                addConsoleMessage("ERROR: Cannot create neural network - no nodes found");
+                return;
+            }
             
+            // Check if texture exists
+            if (!scene.textures.exists('connection')) {
+                // Create a line as fallback
+                const graphics = scene.add.graphics();
+                graphics.fillStyle(0x00ff00, 1);
+                graphics.fillRect(0, 0, 1, 1);
+                graphics.generateTexture('connection', 1, 1);
+                console.log("Created fallback connection texture");
+                addConsoleMessage("Created fallback connection texture");
+            }
+            
+            // Simple fully-connected network
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const node1 = nodes[i];
